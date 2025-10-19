@@ -1,8 +1,11 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, MapPin, DollarSign, Clock, User, Car } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Calendar, MapPin, DollarSign, Clock, User, Car, MessageCircle } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { normalizeVePhone } from "@/lib/currency";
+import { toast } from "sonner";
 
 interface ReservationDetailsDialogProps {
   open: boolean;
@@ -21,6 +24,30 @@ export function ReservationDetailsDialog({
 
   const vehicle = reservation.vehicles;
   const otherParty = isOwner ? "Arrendatario" : "Propietario";
+  
+  // Determinar si mostrar WhatsApp (solo en reservas confirmadas)
+  const showWhatsApp = ['approved', 'finished'].includes(reservation.status);
+  
+  // Obtener teléfono del otro usuario
+  const otherUserPhone = isOwner 
+    ? reservation.renter_profile?.phone 
+    : reservation.owner_profile?.phone;
+  
+  const normalizedPhone = normalizeVePhone(otherUserPhone);
+  const isPhoneValid = !!normalizedPhone;
+  
+  const handleWhatsAppClick = () => {
+    if (!isPhoneValid) {
+      toast.error("Número de teléfono no disponible o inválido");
+      return;
+    }
+    
+    const message = encodeURIComponent(
+      `Hola, me comunico por la reserva ${reservation.id.substring(0, 8)} del ${vehicle?.brand} ${vehicle?.model}.`
+    );
+    
+    window.open(`https://wa.me/${normalizedPhone}?text=${message}`, '_blank', 'noopener,noreferrer');
+  };
 
   const statusColors = {
     pending: "bg-yellow-500",
@@ -143,10 +170,32 @@ export function ReservationDetailsDialog({
               <User className="h-5 w-5" />
               {otherParty}
             </h3>
-            <div className="p-4 rounded-lg bg-secondary/50">
-              <p className="text-sm text-muted-foreground">
-                Información de contacto disponible una vez aprobada la reserva
-              </p>
+            <div className="p-4 rounded-lg bg-secondary/50 space-y-3">
+              {showWhatsApp ? (
+                <>
+                  <p className="text-sm text-muted-foreground">
+                    Contacta directamente por WhatsApp
+                  </p>
+                  <Button
+                    onClick={handleWhatsAppClick}
+                    disabled={!isPhoneValid}
+                    className="w-full bg-[#25D366] hover:bg-[#20BA5A] text-white"
+                    title={!isPhoneValid ? "Número inválido. El usuario debe actualizar su teléfono en su perfil" : ""}
+                  >
+                    <MessageCircle className="mr-2 h-4 w-4" />
+                    Contactar por WhatsApp
+                  </Button>
+                  {!isPhoneValid && (
+                    <p className="text-xs text-destructive">
+                      Número no disponible o inválido
+                    </p>
+                  )}
+                </>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  Información de contacto disponible una vez aprobada la reserva
+                </p>
+              )}
             </div>
           </div>
 

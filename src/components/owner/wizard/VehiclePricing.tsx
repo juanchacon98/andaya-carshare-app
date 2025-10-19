@@ -28,15 +28,12 @@ export function VehiclePricing({ data, onChange }: VehiclePricingProps) {
 
         <div>
           <Label htmlFor="currency">Moneda</Label>
-          <Select value={data.currency || 'VES'} onValueChange={(v) => onChange('currency', v)}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="VES">Bolívares (Bs)</SelectItem>
-              <SelectItem value="USD">Dólares (USD)</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="flex items-center h-10 px-3 py-2 rounded-md border border-input bg-muted text-muted-foreground">
+            Bolívares (Bs) - VES
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">
+            Todos los precios se manejan en Bolívares
+          </p>
         </div>
 
         <div>

@@ -15,7 +15,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Search, DollarSign } from "lucide-react";
 import { formatBs } from "@/lib/currency";
-import { ExchangeRateDisplay } from "@/components/admin/ExchangeRateDisplay";
 
 interface Payment {
   id: string;
@@ -159,9 +158,6 @@ const AdminPayments = () => {
                 <p className="text-3xl font-bold text-foreground">
                   {formatBs(totalRevenue)}
                 </p>
-                {totalRevenue > 0 && (
-                  <ExchangeRateDisplay amountBs={totalRevenue} />
-                )}
               </div>
             </div>
           </CardContent>

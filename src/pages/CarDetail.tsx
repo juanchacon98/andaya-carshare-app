@@ -13,6 +13,7 @@ import Footer from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
+import { normalizeVePhone } from "@/lib/currency";
 
 const CarDetail = () => {
   const { id } = useParams();
@@ -201,19 +202,18 @@ const CarDetail = () => {
   };
 
   const handleContactOwner = () => {
-    if (!car.profiles?.phone) {
-      toast.error("No se encontró información de contacto del propietario");
+    const normalizedPhone = normalizeVePhone(car.profiles?.phone);
+    
+    if (!normalizedPhone) {
+      toast.error("Número de teléfono del propietario no disponible o inválido");
       return;
     }
 
-    // Format phone number for WhatsApp (remove spaces and special characters)
-    const phoneNumber = car.profiles.phone.replace(/\D/g, '');
     const message = encodeURIComponent(
       `Hola, estoy interesado en tu ${car.brand} ${car.model} ${car.year} publicado en AndaYa.`
     );
     
-    // Open WhatsApp
-    window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+    window.open(`https://wa.me/${normalizedPhone}?text=${message}`, '_blank', 'noopener,noreferrer');
   };
 
   const { days, subtotal, serviceFee, total } = calculateTotal();
