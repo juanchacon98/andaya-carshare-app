@@ -155,13 +155,31 @@ export default function UserDashboard() {
           end_date,
           status,
           total,
+          daily_price,
+          subtotal,
+          service_fee,
+          renter_id,
+          owner_id,
           vehicle_id,
+          created_at,
           vehicles (
             id,
             title,
             brand,
             model,
-            city
+            city,
+            year,
+            plate
+          ),
+          renter_profile:profiles!reservations_renter_id_fkey (
+            id,
+            full_name,
+            phone
+          ),
+          owner_profile:profiles!reservations_owner_id_fkey (
+            id,
+            full_name,
+            phone
           )
         `)
         .eq('renter_id', user.id)
@@ -180,13 +198,31 @@ export default function UserDashboard() {
           end_date,
           status,
           total,
+          daily_price,
+          subtotal,
+          service_fee,
+          renter_id,
+          owner_id,
           vehicle_id,
+          created_at,
           vehicles (
             id,
             title,
             brand,
             model,
-            city
+            city,
+            year,
+            plate
+          ),
+          renter_profile:profiles!reservations_renter_id_fkey (
+            id,
+            full_name,
+            phone
+          ),
+          owner_profile:profiles!reservations_owner_id_fkey (
+            id,
+            full_name,
+            phone
           )
         `)
         .eq('renter_id', user.id)
